@@ -1,0 +1,2 @@
+com.hackathon:privacy-gateway:jar:1.0.0
+\- org.flywaydb:flyway-core:jar:11.15.0:compile

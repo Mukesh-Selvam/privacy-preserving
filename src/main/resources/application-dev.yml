@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/gateway_db?TimeZone=UTC
+    username: postgres
+    password: postgres
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      properties:
+        hibernate:
+          jdbc:
+            time_zone: UTC
+
+gateway:
+  opa:
+    url: http://localhost:8182/v1/data/gateway/field_mode
+  vault:
+    url: http://localhost:8201
+    token: root
+    secret-path: /v1/secret/data/gateway/fpe-key

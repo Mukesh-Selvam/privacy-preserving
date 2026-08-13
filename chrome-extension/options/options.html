@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Privacy Gateway — Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #080d1a;
+      --surface: #0d1426;
+      --card:    rgba(22, 35, 65, 0.9);
+      --border:  rgba(99,130,200,0.2);
+      --cyan:    #06b6d4;
+      --indigo:  #6366f1;
+      --green:   #22c55e;
+      --red:     #ef4444;
+      --text:    #e2e8f0;
+      --muted:   #94a3b8;
+      --font:    'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .page-header svg { flex-shrink: 0; }
+
+    h1 { font-size: 1.5rem; font-weight: 700;
+      background: linear-gradient(135deg, #e2e8f0 0%, #06b6d4 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .subtitle { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+
+    .settings-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      max-width: 560px;
+    }
+
+    .settings-card h2 {
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 20px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+
+    label { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    input, select {
+      background: rgba(13,20,38,0.8);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(6,182,212,0.15); }
+    input::placeholder { color: #475569; }
+
+    .hint { font-size: 0.72rem; color: #475569; margin-top: 4px; }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      border: none; border-radius: 8px;
+      padding: 10px 22px;
+      font-family: var(--font); font-size: 0.875rem; font-weight: 600;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
+      color: #fff; box-shadow: 0 4px 15px rgba(99,102,241,0.3);
+    }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: rgba(99,130,200,0.4); }
+
+    .status-msg {
+      margin-top: 16px; padding: 10px 14px;
+      border-radius: 8px; font-size: 0.8rem; font-weight: 500;
+      display: none;
+    }
+
+    .status-msg.success { background: rgba(34,197,94,0.15); border: 1px solid var(--green); color: var(--green); }
+    .status-msg.error   { background: rgba(239,68,68,0.15);  border: 1px solid var(--red);   color: var(--red); }
+
+    .info-section {
+      margin-top: 28px;
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 560px;
+    }
+
+    .info-section h3 { font-size: 0.85rem; font-weight: 600; color: var(--indigo); margin-bottom: 12px; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .info-item { display: flex; flex-direction: column; gap: 3px; }
+    .info-label { font-size: 0.7rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .info-value { font-size: 0.82rem; color: var(--text); font-family: 'Courier New', monospace; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <svg viewBox="0 0 48 48" width="44" height="44" fill="none">
+    <path d="M24 4L8 11v12c0 9.75 6.8 18.87 16 21 9.2-2.13 16-11.25 16-21V11L24 4z"
+      fill="url(#opt-shield)" stroke="#06b6d4" stroke-width="1.5"/>
+    <circle cx="24" cy="22" r="5" fill="#0a0f1e" stroke="#06b6d4" stroke-width="1.5"/>
+    <rect x="21" y="26" width="6" height="7" rx="2" fill="#06b6d4"/>
+    <defs>
+      <linearGradient id="opt-shield" x1="8" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#1e1b4b"/><stop offset="1" stop-color="#0c1a3a"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div>
+    <h1>Privacy Gateway Settings</h1>
+    <p class="subtitle">Configure your connection to the Privacy Gateway API</p>
+  </div>
+</div>
+
+<div class="settings-card">
+  <h2>Connection Settings</h2>
+  <form id="settings-form">
+    <div class="form-row">
+      <label for="opt-api-url">API Base URL</label>
+      <input id="opt-api-url" type="url" placeholder="http://localhost:8080" />
+      <p class="hint">The base URL of your Privacy Gateway Spring Boot server.</p>
+    </div>
+    <div class="form-row">
+      <label for="opt-api-key">API Key (X-API-Key)</label>
+      <input id="opt-api-key" type="password" placeholder="Your API key" autocomplete="off" />
+      <p class="hint">The secret key for authenticating with the gateway. Never share this key.</p>
+    </div>
+    <div class="form-row">
+      <label for="opt-patient-id">Default Patient ID</label>
+      <input id="opt-patient-id" type="number" placeholder="e.g. 1" min="1" />
+      <p class="hint">The patient ID to use when connecting.</p>
+    </div>
+    <div class="form-row">
+      <label for="opt-check-interval">Audit Check Interval (minutes)</label>
+      <select id="opt-check-interval">
+        <option value="1">Every minute</option>
+        <option value="5" selected>Every 5 minutes</option>
+        <option value="15">Every 15 minutes</option>
+        <option value="30">Every 30 minutes</option>
+        <option value="60">Every hour</option>
+      </select>
+      <p class="hint">How often the extension checks for new data access events.</p>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Save Settings</button>
+      <button type="button" id="btn-test" class="btn btn-ghost">Test Connection</button>
+    </div>
+    <div id="status-msg" class="status-msg"></div>
+  </form>
+</div>
+
+<div class="info-section">
+  <h3>📋 Quick API Reference</h3>
+  <div class="info-grid">
+    <div class="info-item">
+      <span class="info-label">Health Check</span>
+      <span class="info-value">GET /actuator/health</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Get Patient Data</span>
+      <span class="info-value">GET /api/gateway/patient/{id}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Update Consent</span>
+      <span class="info-value">POST /api/consent</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Audit Log</span>
+      <span class="info-value">GET /api/audit-log</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">OpenAPI Docs</span>
+      <span class="info-value">/swagger-ui.html</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Auth Header</span>
+      <span class="info-value">X-API-Key: &lt;key&gt;</span>
+    </div>
+  </div>
+</div>
+
+<script src="options.js"></script>
+</body>
+</html>

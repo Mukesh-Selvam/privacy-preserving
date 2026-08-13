@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+gateway:
+  opa:
+    url: ${GATEWAY_OPA_URL}
+  vault:
+    url: ${GATEWAY_VAULT_URL}
+    token: ${GATEWAY_VAULT_TOKEN}
+    secret-path: ${GATEWAY_VAULT_SECRET_PATH}

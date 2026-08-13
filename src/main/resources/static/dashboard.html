@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Gateway — Enterprise Consent & Policy Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+
+<style>
+  :root {
+    --bg-dark: #070B14;
+    --bg-card: rgba(15, 23, 42, 0.75);
+    --bg-card-hover: rgba(30, 41, 59, 0.85);
+    --border-card: rgba(255, 255, 255, 0.08);
+    --border-glow: rgba(56, 189, 248, 0.3);
+    
+    --primary: #38BDF8;
+    --primary-glow: rgba(56, 189, 248, 0.15);
+    --accent-indigo: #6366F1;
+    --accent-purple: #8B5CF6;
+    
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --text-dim: #64748B;
+    
+    --green-bg: rgba(16, 185, 129, 0.12);
+    --green-text: #34D399;
+    --green-border: rgba(52, 211, 153, 0.3);
+    
+    --cyan-bg: rgba(56, 189, 248, 0.12);
+    --cyan-text: #38BDF8;
+    --cyan-border: rgba(56, 189, 248, 0.3);
+    
+    --rose-bg: rgba(244, 63, 94, 0.12);
+    --rose-text: #FB7185;
+    --rose-border: rgba(251, 113, 133, 0.3);
+    
+    --amber-bg: rgba(245, 158, 11, 0.12);
+    --amber-text: #FBBF24;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.07) 0%, transparent 40%);
+    background-attachment: fixed;
+    line-height: 1.5;
+    padding-bottom: 60px;
+  }
+
+  /* Header Navbar */
+  header {
+    background: rgba(11, 17, 32, 0.8);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-card);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 16px 32px;
+  }
+
+  .nav-container {
+    max-width: 1360px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary), var(--accent-indigo));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+  }
+
+  .brand-text h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(to right, #F8FAFC, #94A3B8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .brand-text p {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-bg);
+    border: 1px solid var(--green-border);
+    color: var(--green-text);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green-text);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--green-text);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .nav-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-card);
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+  }
+
+  /* Main Container */
+  .container {
+    max-width: 1360px;
+    margin: 28px auto 0;
+    padding: 0 24px;
+  }
+
+  /* Key Metrics Cards */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-card);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-glow);
+  }
+
+  .metric-info small {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .metric-info strong {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .metric-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .metric-icon.blue { background: rgba(56, 189, 248, 0.1); color: var(--primary); }
+  .metric-icon.purple { background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); }
+  .metric-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--green-text); }
+  .metric-icon.rose { background: rgba(244, 63, 94, 0.1); color: var(--rose-text); }
+
+  /* Main Workspace Layout */
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border-card);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-card);
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title i {
+    font-size: 20px;
+    color: var(--primary);
+  }
+
+  .card-title h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  /* Form Elements */
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  select, input {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text-main);
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  select:focus, input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--accent-indigo));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.25);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35);
+  }
+
+  /* Quick Patient Pills */
+  .patient-pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .pill {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-card);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pill:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .pill.active {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: var(--primary);
+  }
+
+  .pill-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: block;
+  }
+
+  .pill-id {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Response Output Box */
+  .response-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 18px;
+    margin-bottom: 10px;
+  }
+
+  .response-tag {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .tag-200 { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+  .tag-403 { background: var(--rose-bg); color: var(--rose-text); border: 1px solid var(--rose-border); }
+
+  .latency-badge {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .code-container {
+    background: #040711;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  /* JSON Syntax Highlighting */
+  .json-key { color: #7DD3FC; }
+  .json-string { color: #A7F3D0; }
+  .json-number { color: #FDE047; }
+  .json-boolean { color: #F472B6; }
+  .json-null { color: #FB7185; font-style: italic; }
+  .json-removed { color: #F43F5E; font-weight: 600; background: rgba(244, 63, 94, 0.15); padding: 1px 6px; border-radius: 4px; }
+  .json-encrypted { color: #38BDF8; font-weight: 600; background: rgba(56, 189, 248, 0.15); padding: 1px 6px; border-radius: 4px; }
+
+  /* Consent List & Toggles */
+  .consent-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .consent-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-card);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+  }
+
+  .consent-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .field-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .field-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--primary);
+  }
+
+  .field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    text-transform: capitalize;
+  }
+
+  .field-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Custom Switch Slider */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+
+  .switch input { opacity: 0; width: 0; height: 0; }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: .3s ease;
+    border-radius: 24px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s ease;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background-color: var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+
+  /* Audit Log Table */
+  .audit-section {
+    margin-top: 24px;
+  }
+
+  .audit-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border-card);
+  }
+
+  .audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .audit-table th {
+    background: rgba(15, 23, 42, 0.9);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-card);
+  }
+
+  .audit-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--text-main);
+  }
+
+  .audit-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .badge-plain { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+  .badge-encrypted { background: var(--cyan-bg); color: var(--cyan-text); border: 1px solid var(--cyan-border); }
+  .badge-removed { background: var(--rose-bg); color: var(--rose-text); border: 1px solid var(--rose-border); }
+
+  /* Toast Notification */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+  }
+
+  .toast {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid var(--primary);
+    color: var(--text-main);
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  @media (max-width: 1024px) {
+    .workspace-grid { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav-container">
+    <div class="brand">
+      <div class="brand-icon"><i class="ri-shield-keyhole-line"></i></div>
+      <div class="brand-text">
+        <h1>Privacy Gateway Engine</h1>
+        <p>Dual-Gated Policy & Patient Consent Portal • PS26SCS211</p>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div class="status-pill">
+        <div class="pulse-dot"></div>
+        <span>OPA & Redis Active</span>
+      </div>
+      <a href="/swagger-ui.html" target="_blank" class="nav-btn">
+        <i class="ri-code-s-slash-line"></i> OpenAPI Docs
+      </a>
+      <a href="/actuator/health" target="_blank" class="nav-btn">
+        <i class="ri-pulse-line"></i> Actuator
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Metrics Bar -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-info">
+        <small>Policy Engine</small>
+        <strong>Open Policy Agent</strong>
+      </div>
+      <div class="metric-icon blue"><i class="ri-cpu-line"></i></div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-info">
+        <small>Decision Latency</small>
+        <strong id="latencyMetric">&lt; 1.8 ms</strong>
+      </div>
+      <div class="metric-icon green"><i class="ri-flashlight-line"></i></div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-info">
+        <small>Encryption</small>
+        <strong>Vault AES FPE</strong>
+      </div>
+      <div class="metric-icon purple"><i class="ri-lock-password-line"></i></div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-info">
+        <small>Cache Layer</small>
+        <strong>Redis L2 Cache</strong>
+      </div>
+      <div class="metric-icon rose"><i class="ri-database-2-line"></i></div>
+    </div>
+  </div>
+
+  <!-- Main Workspace -->
+  <div class="workspace-grid">
+
+    <!-- Gateway Query Simulator -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="ri-terminal-window-line"></i>
+          <h2>Gateway Request Simulator</h2>
+        </div>
+        <span class="badge badge-plain">HTTP GET</span>
+      </div>
+
+      <!-- Quick Patient Pills -->
+      <div class="form-group">
+        <label>Select Target Patient</label>
+        <div class="patient-pills">
+          <div class="pill active" onclick="selectPatient(1, this)">
+            <span class="pill-name">Rahul</span>
+            <span class="pill-id">ID #1</span>
+          </div>
+          <div class="pill" onclick="selectPatient(2, this)">
+            <span class="pill-name">Priya</span>
+            <span class="pill-id">ID #2</span>
+          </div>
+          <div class="pill" onclick="selectPatient(3, this)">
+            <span class="pill-name">Arjun</span>
+            <span class="pill-id">ID #3</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="orgId">Requesting Partner Organization</label>
+        <select id="orgId" onchange="updateUrlPreview()">
+          <option value="insurer-partner">Insurer Partner (Claims Processing)</option>
+          <option value="research-org">Research Organization (De-identified Slicing)</option>
+          <option value="unregistered-third-party">Unregistered Third Party (Default Deny)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="apiKey">Partner Security API Key (`X-API-Key`)</label>
+        <input type="text" id="apiKey" value="gateway-demo-key" placeholder="Enter X-API-Key header...">
+      </div>
+
+      <div class="form-group">
+        <label>Gateway Endpoint URL</label>
+        <input type="text" id="urlPreview" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary);">
+      </div>
+
+      <button class="btn-primary" onclick="executeGatewayRequest()">
+        <i class="ri-play-fill"></i> Execute Gateway Request
+      </button>
+
+      <div class="response-header">
+        <div class="latency-badge">
+          <i class="ri-timer-flash-line"></i> <span id="responseTime">0 ms</span>
+        </div>
+        <span id="responseStatus" class="response-tag tag-200">200 OK</span>
+      </div>
+
+      <div class="code-container" id="jsonOutput">
+        // Press "Execute Gateway Request" to test dual-gated access control
+      </div>
+    </div>
+
+    <!-- Patient Consent Switchboard -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="ri-user-shared-line"></i>
+          <h2>Patient Consent Switchboard</h2>
+        </div>
+        <small style="color: var(--primary); font-size: 11px; font-weight: 600;">Data Owner Control</small>
+      </div>
+
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+        Toggling a consent switch sends an instant <code style="color: var(--primary);">POST /api/consent</code> request, revoking or granting access and triggering atomic Redis cache eviction.
+      </p>
+
+      <div class="consent-grid" id="consentGrid">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Audit Trail Section -->
+  <div class="card audit-section">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="ri-history-line"></i>
+        <h2>Immutable Compliance Audit Log</h2>
+      </div>
+      <button class="nav-btn" onclick="loadAuditLogs()">
+        <i class="ri-refresh-line"></i> Refresh Audit Trail
+      </button>
+    </div>
+
+    <div class="audit-table-wrapper">
+      <table class="audit-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Org ID</th>
+            <th>User / Agent</th>
+            <th>API Endpoint</th>
+            <th>Policy Rule</th>
+            <th>Masked/FPE</th>
+            <th>Removed</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="auditTbody">
+          <!-- Loaded dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast Box -->
+<div class="toast-container">
+  <div class="toast" id="toast">
+    <i class="ri-checkbox-circle-fill" style="color: var(--green-text); font-size: 18px;"></i>
+    <span id="toastMsg">Action completed successfully</span>
+  </div>
+</div>
+
+<script>
+  let currentPatientId = 1;
+  const fieldsMeta = {
+    name: { icon: 'ri-user-line', desc: 'Patient Full Name' },
+    age: { icon: 'ri-calendar-line', desc: 'Patient Age in Years' },
+    disease: { icon: 'ri-heart-pulse-line', desc: 'Medical Diagnosis & Condition' },
+    aadhaar: { icon: 'ri-fingerprint-line', desc: 'National Identity Identifier' },
+    phone: { icon: 'ri-phone-line', desc: 'Contact Mobile Number' },
+    address: { icon: 'ri-map-pin-line', desc: 'Residential Address' }
+  };
+
+  function updateUrlPreview() {
+    const orgId = document.getElementById('orgId').value;
+    const preview = `${window.location.origin}/api/gateway/patient/${currentPatientId}?orgId=${orgId}&userId=claims-agent-001`;
+    document.getElementById('urlPreview').value = preview;
+  }
+
+  function selectPatient(id, el) {
+    currentPatientId = id;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    updateUrlPreview();
+    loadPatientConsent();
+    executeGatewayRequest();
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  async function executeGatewayRequest() {
+    const orgId = document.getElementById('orgId').value;
+    const apiKey = document.getElementById('apiKey').value;
+    const jsonOutput = document.getElementById('jsonOutput');
+    const statusBadge = document.getElementById('responseStatus');
+    const timeLabel = document.getElementById('responseTime');
+
+    jsonOutput.innerHTML = '<span style="color: var(--text-muted);">Processing request through OPA & Vault...</span>';
+    const startTime = performance.now();
+
+    try {
+      const res = await fetch(`/api/gateway/patient/${currentPatientId}?orgId=${orgId}&userId=claims-agent-001`, {
+        headers: { 'X-API-Key': apiKey }
+      });
+      const endTime = performance.now();
+      const latency = (endTime - startTime).toFixed(1);
+      timeLabel.textContent = `${latency} ms`;
+      document.getElementById('latencyMetric').textContent = `< ${latency} ms`;
+
+      if (res.status === 200) {
+        statusBadge.textContent = '200 OK';
+        statusBadge.className = 'response-tag tag-200';
+      } else {
+        statusBadge.textContent = `${res.status} ${res.statusText}`;
+        statusBadge.className = 'response-tag tag-403';
+      }
+
+      const json = await res.json();
+      jsonOutput.innerHTML = syntaxHighlightJson(json);
+      loadAuditLogs();
+    } catch (err) {
+      jsonOutput.textContent = `Error: ${err.message}`;
+      statusBadge.textContent = '500 ERROR';
+      statusBadge.className = 'response-tag tag-403';
+    }
+  }
+
+  function syntaxHighlightJson(json) {
+    let str = JSON.stringify(json, null, 2);
+    str = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return str.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+      let cls = 'json-number';
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'json-key';
+        } else {
+          cls = 'json-string';
+          if (match.includes('— removed —')) cls = 'json-removed';
+          else if (match.length === 14 && /"\d+"/.test(match)) cls = 'json-encrypted';
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'json-boolean';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      }
+      return '<span class="' + cls + '">' + match + '</span>';
+    });
+  }
+
+  async function loadPatientConsent() {
+    const consentGrid = document.getElementById('consentGrid');
+    try {
+      const res = await fetch(`/api/consent/${currentPatientId}`, {
+        headers: { 'X-API-Key': document.getElementById('apiKey').value }
+      });
+      const json = await res.json();
+      const rows = json.data || json;
+
+      consentGrid.innerHTML = Object.keys(fieldsMeta).map(field => {
+        const found = Array.isArray(rows) ? rows.find(r => r.fieldName === field) : null;
+        const isConsented = found ? found.consentGiven : false;
+        const meta = fieldsMeta[field];
+
+        return `
+          <div class="consent-item">
+            <div class="field-meta">
+              <div class="field-icon"><i class="${meta.icon}"></i></div>
+              <div>
+                <div class="field-name">${field}</div>
+                <div class="field-desc">${meta.desc}</div>
+              </div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" ${isConsented ? 'checked' : ''} onchange="toggleConsent('${field}', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      consentGrid.innerHTML = `<div style="color: var(--rose-text); font-size: 12px;">Failed to load consent settings</div>`;
+    }
+  }
+
+  async function toggleConsent(field, consentGiven) {
+    const apiKey = document.getElementById('apiKey').value;
+    try {
+      const res = await fetch('/api/consent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': apiKey
+        },
+        body: JSON.stringify({
+          patientId: currentPatientId,
+          field: field,
+          consentGiven: consentGiven
+        })
+      });
+
+      if (res.ok) {
+        showToast(`Consent for '${field}' ${consentGiven ? 'GRANTED' : 'REVOKED'} — Redis Cache Evicted!`);
+        executeGatewayRequest();
+      } else {
+        showToast(`Failed to update consent`);
+      }
+    } catch (e) {
+      showToast(`Error updating consent`);
+    }
+  }
+
+  async function loadAuditLogs() {
+    const tbody = document.getElementById('auditTbody');
+    try {
+      const res = await fetch('/api/audit-log?page=0&size=8', {
+        headers: { 'X-API-Key': document.getElementById('apiKey').value }
+      });
+      const json = await res.json();
+      const data = json.data ? (json.data.content || json.data) : [];
+
+      tbody.innerHTML = data.map(log => `
+        <tr>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);">
+            ${log.timestamp ? log.timestamp.replace('T', ' ').substring(0, 19) : ''}
+          </td>
+          <td><strong style="color: var(--primary);">${log.orgId || ''}</strong></td>
+          <td>${log.userId || ''}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">
+            ${log.apiCalled || ''}
+          </td>
+          <td><span class="badge badge-plain">${log.policyApplied || 'gateway.rego'}</span></td>
+          <td><span class="badge badge-encrypted">${log.fieldsMasked || 'None'}</span></td>
+          <td><span class="badge badge-removed">${log.fieldsRemoved || 'None'}</span></td>
+          <td><span class="badge badge-plain">${log.status || '200 OK'}</span></td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="8" style="color: var(--text-muted); text-align: center;">No audit logs available</td></tr>`;
+    }
+  }
+
+  // Initialize
+  updateUrlPreview();
+  loadPatientConsent();
+  executeGatewayRequest();
+</script>
+
+</body>
+</html>

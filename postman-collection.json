@@ -1,0 +1,81 @@
+{
+  "info": {
+    "name": "Privacy-Preserving Data Sharing Gateway - PS26SCS211",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Health check",
+      "request": { "method": "GET", "url": "http://localhost:8080/" }
+    },
+    {
+      "name": "2. Insurer views Rahul (patient 1) - full consent",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:8080/api/gateway/patient/1?orgId=insurer-partner&userId=claims-agent-221"
+      }
+    },
+    {
+      "name": "3. Insurer views Priya (patient 2) - disease consent OFF",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:8080/api/gateway/patient/2?orgId=insurer-partner&userId=claims-agent-221"
+      },
+      "description": "disease is masked here even though the org policy allows it - this is the AND-gate proof."
+    },
+    {
+      "name": "4. Research org views Rahul (patient 1) - narrower slice",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:8080/api/gateway/patient/1?orgId=research-org&userId=researcher-04"
+      }
+    },
+    {
+      "name": "5. Flip Priya's disease consent ON",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "http://localhost:8080/api/consent",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"patientId\": 2, \"field\": \"disease\", \"consentGiven\": true}"
+        }
+      }
+    },
+    {
+      "name": "6. Re-check Priya - disease now visible",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:8080/api/gateway/patient/2?orgId=insurer-partner&userId=claims-agent-221"
+      }
+    },
+    {
+      "name": "7. Flip Priya's disease consent back OFF",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "http://localhost:8080/api/consent",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"patientId\": 2, \"field\": \"disease\", \"consentGiven\": false}"
+        }
+      }
+    },
+    {
+      "name": "8. View a patient's full consent record",
+      "request": { "method": "GET", "url": "http://localhost:8080/api/consent/2" }
+    },
+    {
+      "name": "9. View audit log",
+      "request": { "method": "GET", "url": "http://localhost:8080/api/audit-log" }
+    },
+    {
+      "name": "10. Unauthorized-style request (research org, phone field hidden)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:8080/api/gateway/patient/3?orgId=research-org&userId=researcher-04"
+      },
+      "description": "Confirms phone/address/aadhaar/name are all hidden for research-org regardless of consent, since no org-policy rule exists for them."
+    }
+  ]
+}

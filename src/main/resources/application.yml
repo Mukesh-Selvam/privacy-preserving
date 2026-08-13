@@ -1,0 +1,81 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/gateway_db?TimeZone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6380}
+      password: ${SPRING_REDIS_PASSWORD:}
+      ssl:
+        enabled: ${SPRING_REDIS_SSL:false}
+  cache:
+    type: redis
+
+gateway:
+  api-key: ${GATEWAY_API_KEY:gateway-demo-key}
+  opa:
+    url: ${GATEWAY_OPA_URL:http://localhost:8182/v1/data/gateway/field_mode}
+  vault:
+    url: ${GATEWAY_VAULT_URL:http://localhost:8201}
+    token: ${GATEWAY_VAULT_TOKEN:root}
+    secret-path: ${GATEWAY_VAULT_SECRET_PATH:/v1/secret/data/gateway/fpe-key}
+    default-key: ${GATEWAY_DEFAULT_FPE_KEY:3781495260}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      opaService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5000ms
+        permittedNumberOfCallsInHalfOpenState: 3
+      vaultService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5000ms
+  retry:
+    instances:
+      opaService:
+        maxAttempts: 3
+        waitDuration: 200ms
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+
