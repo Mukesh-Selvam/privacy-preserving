@@ -23,14 +23,8 @@ spring:
           time_zone: UTC
 
   data:
-    redis:
-      host: ${SPRING_REDIS_HOST:localhost}
-      port: ${SPRING_REDIS_PORT:6380}
-      password: ${SPRING_REDIS_PASSWORD:}
-      ssl:
-        enabled: ${SPRING_REDIS_SSL:false}
   cache:
-    type: redis
+    type: simple
 
 gateway:
   api-key: ${GATEWAY_API_KEY:gateway-demo-key}
