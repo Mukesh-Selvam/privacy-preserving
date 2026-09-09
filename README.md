@@ -1,4 +1,4 @@
-# Privacy-Preserving Data Sharing Gateway — PS26SCS211
+# Privacy-Preserving Data Sharing Gateway 
 
 A complete, working implementation: every request for a patient field is
 checked against **both** an organization-level OPA policy **and** the
